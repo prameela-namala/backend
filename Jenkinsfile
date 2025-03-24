@@ -4,7 +4,7 @@ pipeline {
     }
     options {
         // Timeout counter starts BEFORE the agent is allocated
-        timeout(time: 10, unit: 'MINUTES')
+        timeout(time: 30, unit: 'MINUTES')
         disableConcurrentBuilds()
         // retry(1)
     }
