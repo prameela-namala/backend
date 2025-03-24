@@ -23,20 +23,19 @@ pipeline {
                 }
             }
         }
-        stage('Test') {
+        stage('Install Dependencies')
             steps { 
-                sh "echo this is test"
+                sh "npm install"
             }
         }
-        stage('Deploy') {
-            when {
-                expression {
-                    return env.GIT_BRANCH != 'origin/main'
-                }
-            }
+        stage('Docker build')
+            {
             steps {
-                sh "echo this is deploy"
-                // error "pipeline failed"  // Uncomment if needed
+                sh """
+                docker build -t prameela0/backend:${appVersion} .
+                docker images
+                """
+                
             }
         }
     }
