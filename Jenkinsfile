@@ -3,23 +3,23 @@ pipeline {
         label 'AGENT-1'
     }
     options {
-        // Timeout counter starts BEFORE agent is allocated
+        // Timeout counter starts BEFORE the agent is allocated
         timeout(time: 10, unit: 'MINUTES')
         disableConcurrentBuilds()
-        //retry(1)
+        // retry(1)
     }
     environment { 
-        DEBUG ='true'
-        appVersion = ''
-                    }
+        DEBUG = 'true'
+        appVersion = ''  // Can also be initialized here if you prefer
+    }
     stages {
         stage('Read the version') {
             steps {
-               script{ 
-                def packageJson = readJson file: 'package.json'
-                appVersion = packageJson.version
-                echo " App version: ${appVersion}"
-            }
+                script { 
+                    def packageJson = readJson file: 'package.json'
+                    appVersion = packageJson.version
+                    echo "App version: ${appVersion}"
+                }
             }
         }
         stage('Test') {
@@ -28,43 +28,25 @@ pipeline {
             }
         }
         stage('Deploy') {
-            when{
-
-                expression {env.GIT_BRANCH != 'origin/main'}
+            when {
+                expression {
+                    return env.GIT_BRANCH != 'origin/main'
+                }
             }
             steps {
                 sh "echo this is deploy"
-                //error "pipeline failed"
+                // error "pipeline failed"  // Uncomment if needed
             }
         }
-        
-
-    //     stage('approve') {
-    //         input {
-    //             message "Should we continue?"
-    //             ok "Yes, we should."
-    //             submitter "alice,bob"
-    //             parameters {
-    //                 string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
-    //             }
-    //         }
-    //         steps {
-    //             echo "Hello, ${PERSON}, nice to meet you."
-    //         }
-    //     }
-    // }
-
+    }
     post {
         always {
             echo "this section runs always"
             deleteDir()
         }
-
         success {
-
-            echo "this section runs when pipeline success"
+            echo "this section runs when pipeline is successful"
         }
-
         failure {
             echo "this section runs when pipeline fails"
         }
